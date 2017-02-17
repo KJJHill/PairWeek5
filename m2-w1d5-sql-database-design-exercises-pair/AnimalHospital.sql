@@ -1,9 +1,5 @@
 BEGIN TRANSACTION;
 
-CREATE DATABASE [AnimalHospital]
-
-GO
-
 USE [AnimalHospital]
 GO
 
@@ -15,7 +11,6 @@ GO
 
 /****** Object:  Table [dbo].[species]    Script Date: 2/17/2017 2:24:46 PM ******/
 
-
 CREATE TABLE [dbo].[species](
 	[species_id] [int] IDENTITY(1,1) NOT NULL,
 	[name] [varchar](50) NOT NULL,
@@ -24,12 +19,9 @@ CREATE TABLE [dbo].[species](
 
 GO
 
-
-
 /****** Object:  Table [dbo].[procedure]    Script Date: 2/17/2017 2:24:40 PM ******/
 
-
-CREATE TABLE [dbo].[procedure](
+CREATE TABLE [dbo].[procedures](
 	[procedure_id] [int] IDENTITY(1,1) NOT NULL,
 	[name] [varchar](100) NOT NULL,
 	[price] [smallmoney] NOT NULL,
@@ -51,13 +43,12 @@ CREATE TABLE [dbo].[owner](
 	[last_name] [varchar](50) NOT NULL,
 	[address] [varchar](100) NOT NULL,
 	[phone_number] [varchar](10) NOT NULL,
-	CONSTRAINT pk_owner_id PRIMARY KEY (owner_id), 
+	CONSTRAINT pk_owner_id PRIMARY KEY (owner_id)
 ) ON [PRIMARY]
 
 GO
 
 /****** Object:  Table [dbo].[pet]    Script Date: 2/17/2017 2:24:32 PM ******/
-
 
 CREATE TABLE [dbo].[pet](
 	[pet_id] [int] NOT NULL,
@@ -65,21 +56,17 @@ CREATE TABLE [dbo].[pet](
 	[species_id] [int] NOT NULL,
 	[name] [varchar](25) NULL,
 	[age] [int] NULL,
-	[sex] [varchar](7) NOT NULL, DEFAULT 'UNKNOWN',
+	[sex] [varchar](7) NOT NULL DEFAULT 'UNKNOWN',
 	CONSTRAINT pk_pet_id PRIMARY KEY (pet_id),
 	CONSTRAINT pk_pet_species_id FOREIGN KEY (species_id) REFERENCES species(species_id),
 	CONSTRAINT pk_pet_owner_id FOREIGN KEY (owner_id) REFERENCES owner(owner_id),
 	CONSTRAINT pet_sex_check CHECK ((sex = 'M') OR (sex = 'F') OR (sex = 'UNKNOWN')),
-	CONSTRAINT pet_age_check CHECK (age >0),
+	CONSTRAINT pet_age_check CHECK (age >0)
 ) ON [PRIMARY]
-
 
 GO
 
-
-
 /****** Object:  Table [dbo].[visit]    Script Date: 2/17/2017 2:24:52 PM ******/
-
 
 CREATE TABLE [dbo].[visit](
 	[visit_date] [varchar](10) NOT NULL,
@@ -87,12 +74,10 @@ CREATE TABLE [dbo].[visit](
 	[procedure_id] [int] NOT NULL,
 	[invoice_id] [int] IDENTITY(1,1) NOT NULL,
 	CONSTRAINT pk_visit PRIMARY KEY NONCLUSTERED (visit_date, pet_id, procedure_id),
-	CONSTRAINT fk_visit_procedure_id FOREIGN KEY (procedure_id) REFERENCES procedure(procedure_id),
-	CONSTRAINT fk_visit_pet_id FOREIGN KEY (pet_id) REFERENCES pet(pet_id),
+	CONSTRAINT fk_visit_procedure_id FOREIGN KEY (procedure_id) REFERENCES procedures(procedure_id),
+	CONSTRAINT fk_visit_pet_id FOREIGN KEY (pet_id) REFERENCES pet(pet_id)
 ) ON [PRIMARY]
 
 GO
-
-
 
 COMMIT TRANSACTION;
