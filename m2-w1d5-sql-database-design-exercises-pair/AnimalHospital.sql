@@ -1,142 +1,98 @@
-USE [master]
-GO
+BEGIN TRANSACTION;
 
-/****** Object:  Database [AnimalHospital]    Script Date: 2/17/2017 2:18:43 PM ******/
 CREATE DATABASE [AnimalHospital]
- CONTAINMENT = NONE
- ON  PRIMARY 
-( NAME = N'AnimalHospital', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\AnimalHospital.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
- LOG ON 
-( NAME = N'AnimalHospital_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\AnimalHospital_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
-GO
 
-ALTER DATABASE [AnimalHospital] SET COMPATIBILITY_LEVEL = 130
-GO
-
-IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
-begin
-EXEC [AnimalHospital].[dbo].[sp_fulltext_database] @action = 'enable'
-end
-GO
-
-ALTER DATABASE [AnimalHospital] SET ANSI_NULL_DEFAULT OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET ANSI_NULLS OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET ANSI_PADDING OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET ANSI_WARNINGS OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET ARITHABORT OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET AUTO_CLOSE OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET AUTO_SHRINK OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET AUTO_UPDATE_STATISTICS ON 
-GO
-
-ALTER DATABASE [AnimalHospital] SET CURSOR_CLOSE_ON_COMMIT OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET CURSOR_DEFAULT  GLOBAL 
-GO
-
-ALTER DATABASE [AnimalHospital] SET CONCAT_NULL_YIELDS_NULL OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET NUMERIC_ROUNDABORT OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET QUOTED_IDENTIFIER OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET RECURSIVE_TRIGGERS OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET  DISABLE_BROKER 
-GO
-
-ALTER DATABASE [AnimalHospital] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET DATE_CORRELATION_OPTIMIZATION OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET TRUSTWORTHY OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET ALLOW_SNAPSHOT_ISOLATION OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET PARAMETERIZATION SIMPLE 
-GO
-
-ALTER DATABASE [AnimalHospital] SET READ_COMMITTED_SNAPSHOT OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET HONOR_BROKER_PRIORITY OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET RECOVERY SIMPLE 
-GO
-
-ALTER DATABASE [AnimalHospital] SET  MULTI_USER 
-GO
-
-ALTER DATABASE [AnimalHospital] SET PAGE_VERIFY CHECKSUM  
-GO
-
-ALTER DATABASE [AnimalHospital] SET DB_CHAINING OFF 
-GO
-
-ALTER DATABASE [AnimalHospital] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
-GO
-
-ALTER DATABASE [AnimalHospital] SET TARGET_RECOVERY_TIME = 60 SECONDS 
-GO
-
-ALTER DATABASE [AnimalHospital] SET DELAYED_DURABILITY = DISABLED 
-GO
-
-ALTER DATABASE [AnimalHospital] SET QUERY_STORE = OFF
 GO
 
 USE [AnimalHospital]
 GO
 
-ALTER DATABASE SCOPED CONFIGURATION SET MAXDOP = 0;
+SET ANSI_NULLS ON
 GO
 
-ALTER DATABASE SCOPED CONFIGURATION FOR SECONDARY SET MAXDOP = PRIMARY;
+SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER DATABASE SCOPED CONFIGURATION SET LEGACY_CARDINALITY_ESTIMATION = OFF;
-GO
+/****** Object:  Table [dbo].[species]    Script Date: 2/17/2017 2:24:46 PM ******/
 
-ALTER DATABASE SCOPED CONFIGURATION FOR SECONDARY SET LEGACY_CARDINALITY_ESTIMATION = PRIMARY;
-GO
 
-ALTER DATABASE SCOPED CONFIGURATION SET PARAMETER_SNIFFING = ON;
-GO
+CREATE TABLE [dbo].[species](
+	[species_id] [int] IDENTITY(1,1) NOT NULL,
+	[name] [varchar](50) NOT NULL,
+	CONSTRAINT pk_species_id PRIMARY KEY (species_id)
+) ON [PRIMARY]
 
-ALTER DATABASE SCOPED CONFIGURATION FOR SECONDARY SET PARAMETER_SNIFFING = PRIMARY;
-GO
-
-ALTER DATABASE SCOPED CONFIGURATION SET QUERY_OPTIMIZER_HOTFIXES = OFF;
-GO
-
-ALTER DATABASE SCOPED CONFIGURATION FOR SECONDARY SET QUERY_OPTIMIZER_HOTFIXES = PRIMARY;
-GO
-
-ALTER DATABASE [AnimalHospital] SET  READ_WRITE 
 GO
 
 
+
+/****** Object:  Table [dbo].[procedure]    Script Date: 2/17/2017 2:24:40 PM ******/
+
+
+CREATE TABLE [dbo].[procedure](
+	[procedure_id] [int] IDENTITY(1,1) NOT NULL,
+	[name] [varchar](100) NOT NULL,
+	[price] [smallmoney] NOT NULL,
+	[species_id] [int] NOT NULL,
+	CONSTRAINT pk_procedure_id PRIMARY KEY (procedure_id),
+	CONSTRAINT fk_procedure_species FOREIGN KEY (species_id) REFERENCES species(species_id),
+	CONSTRAINT procedure_price_check CHECK (price > 0)
+) ON [PRIMARY]
+
+GO
+
+
+/****** Object:  Table [dbo].[owner]    Script Date: 2/17/2017 2:24:20 PM ******/
+
+
+CREATE TABLE [dbo].[owner](
+	[owner_id] [int] IDENTITY(1,1) NOT NULL,
+	[first_name] [varchar](50) NOT NULL,
+	[last_name] [varchar](50) NOT NULL,
+	[address] [varchar](100) NOT NULL,
+	[phone_number] [varchar](10) NOT NULL,
+	CONSTRAINT pk_owner_id PRIMARY KEY (owner_id), 
+) ON [PRIMARY]
+
+GO
+
+/****** Object:  Table [dbo].[pet]    Script Date: 2/17/2017 2:24:32 PM ******/
+
+
+CREATE TABLE [dbo].[pet](
+	[pet_id] [int] NOT NULL,
+	[owner_id] [int] NOT NULL,
+	[species_id] [int] NOT NULL,
+	[name] [varchar](25) NULL,
+	[age] [int] NULL,
+	[sex] [varchar](7) NOT NULL, DEFAULT 'UNKNOWN',
+	CONSTRAINT pk_pet_id PRIMARY KEY (pet_id),
+	CONSTRAINT pk_pet_species_id FOREIGN KEY (species_id) REFERENCES species(species_id),
+	CONSTRAINT pk_pet_owner_id FOREIGN KEY (owner_id) REFERENCES owner(owner_id),
+	CONSTRAINT pet_sex_check CHECK ((sex = 'M') OR (sex = 'F') OR (sex = 'UNKNOWN')),
+	CONSTRAINT pet_age_check CHECK (age >0),
+) ON [PRIMARY]
+
+
+GO
+
+
+
+/****** Object:  Table [dbo].[visit]    Script Date: 2/17/2017 2:24:52 PM ******/
+
+
+CREATE TABLE [dbo].[visit](
+	[visit_date] [varchar](10) NOT NULL,
+	[pet_id] [int] NOT NULL,
+	[procedure_id] [int] NOT NULL,
+	[invoice_id] [int] IDENTITY(1,1) NOT NULL,
+	CONSTRAINT pk_visit PRIMARY KEY NONCLUSTERED (visit_date, pet_id, procedure_id),
+	CONSTRAINT fk_visit_procedure_id FOREIGN KEY (procedure_id) REFERENCES procedure(procedure_id),
+	CONSTRAINT fk_visit_pet_id FOREIGN KEY (pet_id) REFERENCES pet(pet_id),
+) ON [PRIMARY]
+
+GO
+
+
+
+COMMIT TRANSACTION;
