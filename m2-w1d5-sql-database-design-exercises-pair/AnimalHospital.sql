@@ -1,5 +1,14 @@
-BEGIN TRANSACTION;
 
+
+CREATE DATABASE [AnimalHospital]
+CONTAINMENT = NONE
+ON PRIMARY
+( NAME = N'AnimalHospital', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\AnimalHospital.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+LOG ON
+( NAME = N'AnimalHospital_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\AnimalHospital_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+GO
+
+BEGIN TRANSACTION;
 USE [AnimalHospital]
 GO
 
